@@ -1,102 +1,99 @@
-#include "I2C_Interface.hpp"
-#include "MS4525DO_Sensor.hpp"
+#include <CAN.hpp>
+
+//faster to type
+#define p(msg)        Serial.print(msg)
+#define pd(msg,fill)  Serial.print(msg,fill)
+#define pl(msg)       Serial.println(msg)
+
+uint8_t counter = 0;
+uint8_t frameLength = 0;
+unsigned long previousMillis = 0;     // stores last time output was updated
+const long interval = 1000;           // transmission interval (milliseconds)
+
 void setup() {
-  Wire.setSDA(I2C_SDA);
-  Wire.setSCL(I2C_SCL);
-  Wire.begin();
-  Serial.begin(BAUD_RATE);
-  pinMode(PB5, INPUT);
-}
-void print_converted(data_t package) {
-  p("Status: \t");      pl(package.converted.status);
-  p("Pressure: \t");    pl(package.converted.pressure_psi);
-  p("Temperature: \t"); pl(package.converted.temperature_C);
-  p("Airspeed: \t");    pl(package.converted.airspeed_ms);
-}
-void print_raw(data_t package) {
-  p("Status: \t");      pl(package.raw.status);
-  p("Pressure: \t");    pl(package.raw.pressure);
-  p("Temperature: \t"); pl(package.raw.temperature);
-}
-void loop() {
-  MS4525DO_Sensor sensor(MS4525DO_ADDRESS);
-  sensor.update_sensor_package();
-  // if(digitalRead(PB5)){
-  //   pl("HIGH");
-  // } else {
-  //   pl("na");
-  // }
-  //  data_t sensor_package = sensor.fetch_sensor_package();
-  // print_converted(sensor_package); //orange - a10 
-  // pl();
-  // p(micros()); p(",");
-  // p(sensor_package.raw.pressure); p(", "); p(sensor_package.converted.pressure_psi); p(", "); pl(sensor_package.converted.airspeed_ms);
-
-  // p(", "); 
-  // pl(sensor_package.converted.airspeed_ms);
-
-  // p(sensor_package.raw.temperature); p(", "); pl(sensor_package.converted.temperature_C);
-  // pl("--------------------------------------------------------");
-  // pl(sensor_package.raw.status);
-  // pl(sensor_package.raw.pressure);
-  // pl(sensor_package.raw.temperature);
-  //  pl(sensor_package.converted.airspeed_ms);
+  Serial.begin(9600);
  
-//TODO: 
-  //namespaces for organization
-  //use Interrupt pin to avoid reading stale data
-  // digitalWrite(PB5, HIGH);
-  // delay(5000);
-  // digitalWrite(PB5, LOW);
-  // delay(5000);
+  //bool ret = CANInit(CAN_500KBPS, 0);  // CAN_RX mapped to PA11, CAN_TX mapped to PA12
+  bool ret = CANInit(CAN_500KBPS, 2);  // CAN_RX mapped to PB8, CAN_TX mapped to PB9
+  //bool ret = CANInit(CAN_500KBPS, 3);  // CAN_RX mapped to PD0, CAN_TX mapped to PD1
+  //bool ret = CANInit(CAN_1000KBPS, 0);  // CAN_RX mapped to PA11, CAN_TX mapped to PA12
+  //bool ret = CANInit(CAN_1000KBPS, 2);  // CAN_RX mapped to PB8, CAN_TX mapped to PB9
+  //bool ret = CANInit(CAN_1000KBPS, 3);  // CAN_RX mapped to PD0, CAN_TX mapped to PD1
+  if (!ret) while(true);
 }
 
+void loop() {
+  CAN_msg_t CAN_TX_msg;
+  CAN_msg_t CAN_RX_msg;
 
-// #include <Wire.h>
+  CAN_TX_msg.data[0] = 0x00;
+  CAN_TX_msg.data[1] = 0x01;
+  CAN_TX_msg.data[2] = 0x02;
+  CAN_TX_msg.data[3] = 0x03;
+  CAN_TX_msg.data[4] = 0x04;
+  CAN_TX_msg.data[5] = 0x05;
+  CAN_TX_msg.data[6] = 0x06;
+  CAN_TX_msg.data[7] = 0x07;
+  CAN_TX_msg.len = frameLength;
 
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    if ( ( counter % 2) == 0) {
+      CAN_TX_msg.type = DATA_FRAME;
+      if (CAN_TX_msg.len == 0) CAN_TX_msg.type = REMOTE_FRAME;
+      CAN_TX_msg.format = EXTENDED_FORMAT;
+      CAN_TX_msg.id = 0x32F103;
+    } else {
+      CAN_TX_msg.type = DATA_FRAME;
+      if (CAN_TX_msg.len == 0) CAN_TX_msg.type = REMOTE_FRAME;
+      CAN_TX_msg.format = STANDARD_FORMAT;
+      CAN_TX_msg.id = 0x103;
+    }
+    CANSend(&CAN_TX_msg);
+    pl("Sent CAN message");
+    frameLength++;
+    if (frameLength == 9) frameLength = 0;
+    counter++;
+  }
+  
+  if(CANMsgAvail()) {
+    pl("CAN msg available");
+    CANReceive(&CAN_RX_msg);
 
-// void setup() {
+    if (CAN_RX_msg.format == EXTENDED_FORMAT) {
+      p("Extended ID: 0x");
+      if (CAN_RX_msg.id < 0x10000000) p("0");
+      if (CAN_RX_msg.id < 0x1000000)  p("0");
+      if (CAN_RX_msg.id < 0x100000)   p("0");
+      if (CAN_RX_msg.id < 0x10000)    p("0");
+      if (CAN_RX_msg.id < 0x1000)     p("0");
+      if (CAN_RX_msg.id < 0x100)      p("0");
+      if (CAN_RX_msg.id < 0x10)       p("0");
+      pd(CAN_RX_msg.id, HEX);
+    } else {
+      p("Standard ID: 0x");
+      if (CAN_RX_msg.id < 0x100)      p("0");
+      if (CAN_RX_msg.id < 0x10)       p("0");
+      pd(CAN_RX_msg.id, HEX);
+      p("     ");
+    }
 
-//   Serial.begin(9600);
-//   Wire.begin();
-//   Serial.println("\nI2C Scanner");
-// }
+    p(" DLC: ");
+    p(CAN_RX_msg.len);
+    if (CAN_RX_msg.type == DATA_FRAME) {
+      p(" Data: ");
+      for(int i=0; i<CAN_RX_msg.len; i++) {
+        p("0x"); 
+        pd(CAN_RX_msg.data[i], HEX); 
+        if (i != (CAN_RX_msg.len-1))  p(" ");
+      }
+      pl();
+    } else {
+      pl(" Data: REMOTE REQUEST FRAME");
+    }
+  }
+    
+  
 
-
-// void loop() {
-//   byte error, address;
-//   int nDevices;
-
-//   Serial.println("Scanning...");
-
-//   nDevices = 0;
-//   for(address = 1; address < 127; address++) {
-//     // The i2c_scanner uses the return value of
-//     // the Write.endTransmisstion to see if
-//     // a device did acknowledge to the address.
-
-//     Wire.beginTransmission(address);
-//     error = Wire.endTransmission();
-
-//     if (error == 0) {
-//       Serial.print("I2C device found at address 0x");
-//       if (address < 16)
-//         Serial.print("0");
-//       Serial.println(address, HEX);
-
-//       nDevices++;
-//     }
-//     else if (error == 4) {
-//       Serial.print("Unknown error at address 0x");
-//       if (address < 16)
-//         Serial.print("0");
-//       Serial.println(address, HEX);
-//     }
-//   }
-//   if (nDevices == 0)
-//     Serial.println("No I2C devices found");
-//   else
-//     Serial.println("done");
-
-//   delay(5000);           // wait 5 seconds for next scan
-// }
+}

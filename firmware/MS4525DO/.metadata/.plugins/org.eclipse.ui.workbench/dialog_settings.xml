@@ -25,4 +25,6 @@
 			<item value="build"/>
 		</list>
 	</section>
+	<section name="NewWizardAction">
+	</section>
 </section>
