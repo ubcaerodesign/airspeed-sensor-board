@@ -47,7 +47,7 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-
+CAN_TxHeaderTypeDef TxHeader;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,7 +99,8 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   struct MS4525DO_t MS4525DO;
-  MS4525DO_Initialize(&MS4525DO, &hi2c1);
+  MS4525DO_Initialize(&MS4525DO, &hi2c1, &hcan, &TxHeader);
+//  void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *TxHeader)
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,7 +108,7 @@ int main(void)
   while (1)
   {
 	  read_MS4525DO(&MS4525DO);
-
+	  txCAN(&MS4525DO);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

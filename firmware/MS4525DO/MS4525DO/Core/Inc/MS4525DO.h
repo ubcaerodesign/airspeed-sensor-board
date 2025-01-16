@@ -50,6 +50,9 @@
 
 /*linear interpolation macro*/
 #define LINEAR_INTERPOLATE(x,x1,x2,y1,y2) (double) (y1+(x-x1)*(y2-y1)/(x2-x1))
+/*seperate 16-bit data to MSB and LSB*/
+#define LSB(data) (uint8_t)(data & 0xFF)
+#define MSB(data) (uint8_t)(data >> 8)
 
 /*Raw bytes*/
 struct raw_t {
@@ -65,11 +68,11 @@ struct processed_t {
 };
 /*data to be sent over via CAN*/
 struct CAN_payload_t {
-	uint16_t airspeed; 		//conversion?
-	uint16_t temperature;	//conversion?
+	uint16_t airspeed_deca_mps;		//conversion = deca
+	uint16_t temperature_deca_C;	//conversion = deca
 	//more flags to be added
-	uint8_t is_stale: 1;	//data freshness
-	uint8_t i2c_comms_error: 1;
+	uint8_t is_stale: 1;			//data freshness
+	uint8_t i2c_comms_error: 1;		//data validity
 };
 /*I2C read status codes - see MS4525DO interface manual*/
 typedef enum {
@@ -82,14 +85,17 @@ typedef enum {
 
 struct MS4525DO_t {
 	I2C_HandleTypeDef *i2c_handle;
+	CAN_HandleTypeDef *can_handle;
+	CAN_TxHeaderTypeDef *canTx_handle;
 	SensorStatus sensor_status;
 	struct raw_t raw_data;
 	struct processed_t processed_data;
 	struct CAN_payload_t CAN_package;
 };
 
-void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c);
+void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *TxHeader);
 void read_MS4525DO(struct MS4525DO_t *pSensor);
 double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed);
 double calibrate_airspeed_LUT(uint16_t raw_pressure);
+void txCAN(struct MS4525DO_t *pSensor);
 #endif /* INC_MS4525DO_H_ */

@@ -18,9 +18,18 @@ int _write(int file, char *data, int len) {
 /**
  * Configures which i2c port MS4525DO is on
  */
-void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c) {
+void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *TxHeader) {
 	/*Set i2c handle*/
 	pSensor->i2c_handle = hi2c;
+	/*Set CAN handle*/
+	pSensor->can_handle = hcan;
+	pSensor->canTx_handle = TxHeader;
+	/*Initialize CAN*/
+	HAL_CAN_Start(pSensor->can_handle);
+	pSensor->canTx_handle->DLC = 8;			//data length
+	pSensor->canTx_handle->IDE = CAN_ID_STD;
+	pSensor->canTx_handle->RTR = CAN_RTR_DATA;
+	pSensor->canTx_handle->StdId = 0x123; 	//message ID
 	/*Initialize everything to defaults*/
 	SensorStatus initStatus = normal;
 	pSensor->sensor_status = initStatus;
@@ -30,8 +39,8 @@ void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c) {
 	pSensor->processed_data.temperature_C = 0;
 	pSensor->processed_data.airspeed_mps = 0;
 	pSensor->processed_data.airspeed_calibrated_mps = 0;
-	pSensor->CAN_package.airspeed = 0;
-	pSensor->CAN_package.temperature = 0;
+	pSensor->CAN_package.airspeed_deca_mps = 0;
+	pSensor->CAN_package.temperature_deca_C = 0;
 	pSensor->CAN_package.is_stale = 0;
 	pSensor->CAN_package.i2c_comms_error = 0;
 }
@@ -127,8 +136,8 @@ void read_MS4525DO(struct MS4525DO_t *pSensor) {
     /*Populate CAN package*/
     uint16_t airspeed_tx = (uint8_t)(pSensor->processed_data.airspeed_calibrated_mps*10); //multiply by 10 to preserve 1 decimal place
     uint16_t temperature_tx = (uint8_t)(pSensor->processed_data.temperature_C*10);		 //multiply by 10 to preserve 1 decimal place
-    pSensor->CAN_package.airspeed = airspeed_tx;
-    pSensor->CAN_package.temperature = temperature_tx;
+    pSensor->CAN_package.airspeed_deca_mps = airspeed_tx;
+    pSensor->CAN_package.temperature_deca_C = temperature_tx;
     if(pSensor->sensor_status == stale) {
     	pSensor->CAN_package.is_stale = 1;
     } else {
@@ -139,10 +148,10 @@ void read_MS4525DO(struct MS4525DO_t *pSensor) {
     } else {
     	pSensor->CAN_package.i2c_comms_error = 0;
     }
-    printf("Airspeed: %u \r\n", pSensor->CAN_package.airspeed);
-    printf("Temp: %u \r\n", pSensor->CAN_package.temperature);
-    printf("Is Stale: %u \r\n", pSensor->CAN_package.is_stale);
-    printf("Comms Err: %u \r\n", pSensor->CAN_package.i2c_comms_error);
+//    printf("Airspeed: %u \r\n", pSensor->CAN_package.airspeed);
+//    printf("Temp: %u \r\n", pSensor->CAN_package.temperature);
+//    printf("Is Stale: %u \r\n", pSensor->CAN_package.is_stale);
+//    printf("Comms Err: %u \r\n", pSensor->CAN_package.i2c_comms_error);
 }
 
 double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed) {
@@ -204,4 +213,35 @@ double calibrate_airspeed_LUT(uint16_t raw_pressure) {
 		break;
 	}
 	return mapped_airspeed;
+}
+void txCAN(struct MS4525DO_t *pSensor) {
+	uint32_t txMailbox;
+	/*Payload, transmit in big endian*/
+	uint8_t txData[8] = {0,0,0,0,0,0,0,0};
+	txData[0] = MSB(pSensor->CAN_package.airspeed_deca_mps);
+	txData[1] = LSB(pSensor->CAN_package.airspeed_deca_mps);
+	txData[2] = MSB(pSensor->CAN_package.temperature_deca_C);
+	txData[3] = LSB(pSensor->CAN_package.temperature_deca_C);
+	HAL_StatusTypeDef CAN_status = HAL_CAN_AddTxMessage(pSensor->can_handle, pSensor->canTx_handle, txData, &txMailbox);
+//	if(CAN_status != HAL_OK) {
+//		printf("error\r\n");
+//	} else {
+//		printf("success\r\n")
+//	}
+
+	    if (CAN_status == HAL_OK) {
+	        printf("HAL_OK\r\n");
+	    } else if (CAN_status == HAL_ERROR) {
+	    	printf("HAL_ERROR\r\n");
+	    } else if (CAN_status == HAL_BUSY) {
+	    	printf("HAL_BUSY\r\n");
+	    } else if (CAN_status == HAL_TIMEOUT) {
+	        printf("HAL_TIMEOUT\r\n");
+	    }
+	    uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+
+	    if (error != HAL_CAN_ERROR_NONE) {
+	        printf("CAN Error: 0x%08lX\r\n", error);
+	    }
+
 }
