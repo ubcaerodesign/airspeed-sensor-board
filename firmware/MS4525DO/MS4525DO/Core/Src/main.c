@@ -109,6 +109,8 @@ int main(void)
   {
 	  read_MS4525DO(&MS4525DO);
 	  txCAN(&MS4525DO);
+
+	  //THIS IS A TEST!
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
