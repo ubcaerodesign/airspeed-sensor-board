@@ -29,7 +29,7 @@ void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CA
 	pSensor->canTx_handle->DLC = 8;			//data length
 	pSensor->canTx_handle->IDE = CAN_ID_STD;
 	pSensor->canTx_handle->RTR = CAN_RTR_DATA;
-	pSensor->canTx_handle->StdId = 0x123; 	//message ID
+	pSensor->canTx_handle->StdId = 0x0; 	//message ID
 	/*Initialize everything to defaults*/
 	SensorStatus initStatus = normal;
 	pSensor->sensor_status = initStatus;
@@ -148,8 +148,8 @@ void read_MS4525DO(struct MS4525DO_t *pSensor) {
     } else {
     	pSensor->CAN_package.i2c_comms_error = 0;
     }
-//    printf("Airspeed: %u \r\n", pSensor->CAN_package.airspeed);
-//    printf("Temp: %u \r\n", pSensor->CAN_package.temperature);
+//    printf("Airspeed: %u \r\n", pSensor->CAN_package.airspeed_deca_mps);
+//    printf("Temp: %u \r\n", pSensor->CAN_package.temperature_deca_C);
 //    printf("Is Stale: %u \r\n", pSensor->CAN_package.is_stale);
 //    printf("Comms Err: %u \r\n", pSensor->CAN_package.i2c_comms_error);
 }
@@ -215,33 +215,68 @@ double calibrate_airspeed_LUT(uint16_t raw_pressure) {
 	return mapped_airspeed;
 }
 void txCAN(struct MS4525DO_t *pSensor) {
-	uint32_t txMailbox;
+	uint32_t TxMailbox;
 	/*Payload, transmit in big endian*/
-	uint8_t txData[8] = {0,0,0,0,0,0,0,0};
-	txData[0] = MSB(pSensor->CAN_package.airspeed_deca_mps);
-	txData[1] = LSB(pSensor->CAN_package.airspeed_deca_mps);
-	txData[2] = MSB(pSensor->CAN_package.temperature_deca_C);
-	txData[3] = LSB(pSensor->CAN_package.temperature_deca_C);
-	HAL_StatusTypeDef CAN_status = HAL_CAN_AddTxMessage(pSensor->can_handle, pSensor->canTx_handle, txData, &txMailbox);
+	uint8_t TxData[8] = {0,0,0,0,0,0,0,0};
+	TxData[0] = MSB(pSensor->CAN_package.airspeed_deca_mps);
+	TxData[1] = LSB(pSensor->CAN_package.airspeed_deca_mps);
+	TxData[2] = MSB(pSensor->CAN_package.temperature_deca_C);
+	TxData[3] = LSB(pSensor->CAN_package.temperature_deca_C);
+	//TODO: transmit the error bits too
+
+    // Wait for a free mailbox
+    while (HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle) == 0) {
+        HAL_Delay(1); // Small delay to avoid busy-waiting
+    }
+    // Attempt to add message to a mailbox
+    if (HAL_CAN_AddTxMessage(pSensor->can_handle, pSensor->canTx_handle, TxData, &TxMailbox) != HAL_OK) {
+    	uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+    	printf("CAN Error: 0x%08lX\r\n", error);
+    } else {
+    	uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+    	printf("Success 0x%08lX\r\n", error);
+
+    }
+//	if ((HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle) > 0)) {
+//	/* Transmit the CAN message */
+//		if (HAL_CAN_AddTxMessage(pSensor->can_handle,  pSensor->canTx_handle, TxData, &TxMailbox) == HAL_OK) {
+//			/* Message successfully sent */
+//			uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+//			printf("CAN Error: 0x%08lX\r\n", error);
+//		} else {
+//			/* Transmission error */
+//			uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+//			printf("CAN Error: 0x%08lX\r\n", error);
+//		}
+//	} else {
+//		/* No available transmission mailbox */
+//		printf("No available transmission mailbox \n\r");
+////		uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+////		printf("CAN Error: 0x%08lX\r\n", error);
+//	}
+//	HAL_StatusTypeDef HAL_status = HAL_CAN_AddTxMessage(pSensor->can_handle, pSensor->canTx_handle, txData, &txMailbox);
+
 //	if(CAN_status != HAL_OK) {
 //		printf("error\r\n");
 //	} else {
 //		printf("success\r\n")
 //	}
 
-	    if (CAN_status == HAL_OK) {
-	        printf("HAL_OK\r\n");
-	    } else if (CAN_status == HAL_ERROR) {
-	    	printf("HAL_ERROR\r\n");
-	    } else if (CAN_status == HAL_BUSY) {
-	    	printf("HAL_BUSY\r\n");
-	    } else if (CAN_status == HAL_TIMEOUT) {
-	        printf("HAL_TIMEOUT\r\n");
-	    }
-	    uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
-
-	    if (error != HAL_CAN_ERROR_NONE) {
-	        printf("CAN Error: 0x%08lX\r\n", error);
-	    }
-
+//	if (HAL_status == HAL_OK) {
+//		printf("HAL_OK\r\n");
+//	} else if (HAL_status == HAL_ERROR) {
+//		printf("HAL_ERROR\r\n");
+//	} else if (HAL_status == HAL_BUSY) {
+//		printf("HAL_BUSY\r\n");
+//	} else if (HAL_status == HAL_TIMEOUT) {
+//		printf("HAL_TIMEOUT\r\n");
+//	}
+//	uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
+//
+//	if (error != HAL_CAN_ERROR_NONE) {
+//		printf("CAN Error: 0x%08lX\r\n", error);
+//	}
+//
+//	uint32_t txMailbox_level = HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle);
+//	printf("TxMailbox Level: %u \r\n", txMailbox_level);
 }

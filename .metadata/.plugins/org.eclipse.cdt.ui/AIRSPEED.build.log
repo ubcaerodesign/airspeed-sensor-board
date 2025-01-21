@@ -1,0 +1,10 @@
+12:09:20 **** Incremental Build of configuration Debug for project AIRSPEED ****
+make -j8 all 
+arm-none-eabi-size  AIRSPEED.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6816	     12	   1764	   8592	   2190	AIRSPEED.elf
+Finished building: default.size.stdout
+ 
+
+12:09:21 Build Finished. 0 errors, 0 warnings. (took 1s.598ms)
+
