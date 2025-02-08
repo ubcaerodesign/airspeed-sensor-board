@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;MS4525DO/Core/Inc/MS4525DO&apos; to &apos;MS4525DO.h&apos;" description="Rename resource &apos;MS4525DO&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/MS4525DO" name="MS4525DO.h" stamp="1729975697996" updateReferences="false"/>
+</session>

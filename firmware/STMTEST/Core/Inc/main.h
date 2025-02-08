@@ -53,7 +53,16 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+#define PRINTF_OVERLOAD
+//#ifdef PRINTF_OVERLOAD
+//// Use the handle for the UART you configured (e.g., huart1)
+//extern UART_HandleTypeDef huart1;
+//int _write(int file, char *data, int len) {
+//    // Transmit data via UART
+//    HAL_UART_Transmit(&huart1, (uint8_t*)data, len, HAL_MAX_DELAY);
+//    return len;
+//}
+//#endif
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

@@ -224,10 +224,12 @@ void txCAN(struct MS4525DO_t *pSensor) {
 	TxData[3] = LSB(pSensor->CAN_package.temperature_deca_C);
 	//TODO: transmit the error bits too
 
+	uint32_t TxMailbox_level = HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle);
+	printf("Mailbox Available: %u \r\n", TxMailbox_level);
     // Wait for a free mailbox
-    while (HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle) == 0) {
-        HAL_Delay(1); // Small delay to avoid busy-waiting
-    }
+//    while (HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle) == 0) {
+        HAL_Delay(1000); // Small delay to avoid busy-waiting
+//    }
     // Attempt to add message to a mailbox
     if (HAL_CAN_AddTxMessage(pSensor->can_handle, pSensor->canTx_handle, TxData, &TxMailbox) != HAL_OK) {
     	uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
@@ -235,7 +237,6 @@ void txCAN(struct MS4525DO_t *pSensor) {
     } else {
     	uint32_t error = HAL_CAN_GetError(pSensor->can_handle);
     	printf("Success 0x%08lX\r\n", error);
-
     }
 //	if ((HAL_CAN_GetTxMailboxesFreeLevel(pSensor->can_handle) > 0)) {
 //	/* Transmit the CAN message */

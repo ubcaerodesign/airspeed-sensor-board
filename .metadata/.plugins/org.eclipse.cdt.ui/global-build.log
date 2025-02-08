@@ -1,28 +1,52 @@
-22:39:39 **** Incremental Build of configuration Debug for project MS4525DO ****
+17:38:06 **** Incremental Build of configuration Debug for project STM_Transmit ****
 make -j8 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: MS4525DO.elf
+../Core/Src/main.c: In function 'CAN_Tx':
+../Core/Src/main.c:85:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   85 |         printf("Transmit not ok \n\r");
+      |         ^~~~~~
+../Core/Src/main.c:21:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+   20 | #include "main.h"
+  +++ |+#include <stdio.h>
+   21 | 
+../Core/Src/main.c:85:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   85 |         printf("Transmit not ok \n\r");
+      |         ^~~~~~
+../Core/Src/main.c:85:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+../Core/Src/main.c: In function 'HAL_CAN_RxFifo0MsgPendingCallback':
+../Core/Src/main.c:96:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   96 |         printf("Received CAN message: ID=0x%X, Data= %X %X %X %X %X %X %X %X\n",
+      |         ^~~~~~
+../Core/Src/main.c:96:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+../Core/Src/main.c:96:45: warning: format '%X' expects argument of type 'unsigned int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   96 |         printf("Received CAN message: ID=0x%X, Data= %X %X %X %X %X %X %X %X\n",
+      |                                            ~^
+      |                                             |
+      |                                             unsigned int
+      |                                            %lX
+   97 |                RxHeader.StdId, RxData[0], RxData[1], RxData[2], RxData[3],
+      |                ~~~~~~~~~~~~~~                
+      |                        |
+      |                        uint32_t {aka long unsigned int}
+../Core/Src/main.c:100:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+  100 |         printf("Receive not ok \n\r");
+      |         ^~~~~~
+../Core/Src/main.c:100:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+arm-none-eabi-gcc -o "STM_Transmit.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\STM_Transmit\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM_Transmit.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STM_Transmit.elf
  
-arm-none-eabi-size  MS4525DO.elf 
-arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
+arm-none-eabi-size  STM_Transmit.elf 
+arm-none-eabi-objdump -h -S STM_Transmit.elf  > "STM_Transmit.list"
    text	   data	    bss	    dec	    hex	filename
-  29232	    488	   2128	  31848	   7c68	MS4525DO.elf
+  11852	    104	   2016	  13972	   3694	STM_Transmit.elf
 Finished building: default.size.stdout
  
-Finished building: MS4525DO.list
+Finished building: STM_Transmit.list
  
-22:40:53 **** Incremental Build of configuration Release for project MS4525DO ****
+17:38:22 **** Incremental Build of configuration Debug for project STM_Transmit ****
 make -j8 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: MS4525DO.elf
- 
-arm-none-eabi-size  MS4525DO.elf 
-arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
+arm-none-eabi-size  STM_Transmit.elf 
    text	   data	    bss	    dec	    hex	filename
-  14872	    120	   2128	  17120	   42e0	MS4525DO.elf
+  11852	    104	   2016	  13972	   3694	STM_Transmit.elf
 Finished building: default.size.stdout
- 
-Finished building: MS4525DO.list
  

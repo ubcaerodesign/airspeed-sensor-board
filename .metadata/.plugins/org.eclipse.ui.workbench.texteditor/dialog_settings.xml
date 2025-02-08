@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="Activate"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="activate"/>
+			<item value="MX_CAN_INIT"/>
+			<item value="hcan1"/>
+			<item value=" TxHeader.StdId"/>
+			<item value="TxHeader.StdId"/>
+			<item value="huart2"/>
+			<item value="CAN_Con"/>
+			<item value="CAN_Init"/>
+			<item value="CAN_Ini"/>
+			<item value="0x002"/>
+			<item value="AutoBus"/>
+			<item value="can_config"/>
+			<item value="can_init"/>
+			<item value="hal_can"/>
+			<item value="bof"/>
+		</list>
+		<list key="replacehistory">
+			<item value="hcan"/>
+			<item value="huart1"/>
+			<item value=""/>
+			<item value="0x08003542"/>
+			<item value="0x080"/>
+			<item value="0x0"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="823"/>
+		<item key="DIALOG_Y_ORIGIN" value="148"/>
+		<item key="DIALOG_WIDTH" value="511"/>
+		<item key="DIALOG_HEIGHT" value="523"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-18|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>

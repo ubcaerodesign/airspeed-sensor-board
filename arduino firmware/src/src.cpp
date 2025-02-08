@@ -13,8 +13,8 @@ const long interval = 1000;           // transmission interval (milliseconds)
 void setup() {
   Serial.begin(9600);
  
-  //bool ret = CANInit(CAN_500KBPS, 0);  // CAN_RX mapped to PA11, CAN_TX mapped to PA12
-  bool ret = CANInit(CAN_500KBPS, 2);  // CAN_RX mapped to PB8, CAN_TX mapped to PB9
+  bool ret = CANInit(CAN_500KBPS, 0);  // CAN_RX mapped to PA11, CAN_TX mapped to PA12
+  // bool ret = CANInit(CAN_500KBPS, 2);  // CAN_RX mapped to PB8, CAN_TX mapped to PB9
   //bool ret = CANInit(CAN_500KBPS, 3);  // CAN_RX mapped to PD0, CAN_TX mapped to PD1
   //bool ret = CANInit(CAN_1000KBPS, 0);  // CAN_RX mapped to PA11, CAN_TX mapped to PA12
   //bool ret = CANInit(CAN_1000KBPS, 2);  // CAN_RX mapped to PB8, CAN_TX mapped to PB9
@@ -57,42 +57,42 @@ void loop() {
     counter++;
   }
   
-  if(CANMsgAvail()) {
-    pl("CAN msg available");
-    CANReceive(&CAN_RX_msg);
+  // if(CANMsgAvail()) {
+  //   pl("CAN msg available");
+  //   CANReceive(&CAN_RX_msg);
 
-    if (CAN_RX_msg.format == EXTENDED_FORMAT) {
-      p("Extended ID: 0x");
-      if (CAN_RX_msg.id < 0x10000000) p("0");
-      if (CAN_RX_msg.id < 0x1000000)  p("0");
-      if (CAN_RX_msg.id < 0x100000)   p("0");
-      if (CAN_RX_msg.id < 0x10000)    p("0");
-      if (CAN_RX_msg.id < 0x1000)     p("0");
-      if (CAN_RX_msg.id < 0x100)      p("0");
-      if (CAN_RX_msg.id < 0x10)       p("0");
-      pd(CAN_RX_msg.id, HEX);
-    } else {
-      p("Standard ID: 0x");
-      if (CAN_RX_msg.id < 0x100)      p("0");
-      if (CAN_RX_msg.id < 0x10)       p("0");
-      pd(CAN_RX_msg.id, HEX);
-      p("     ");
-    }
+  //   if (CAN_RX_msg.format == EXTENDED_FORMAT) {
+  //     p("Extended ID: 0x");
+  //     if (CAN_RX_msg.id < 0x10000000) p("0");
+  //     if (CAN_RX_msg.id < 0x1000000)  p("0");
+  //     if (CAN_RX_msg.id < 0x100000)   p("0");
+  //     if (CAN_RX_msg.id < 0x10000)    p("0");
+  //     if (CAN_RX_msg.id < 0x1000)     p("0");
+  //     if (CAN_RX_msg.id < 0x100)      p("0");
+  //     if (CAN_RX_msg.id < 0x10)       p("0");
+  //     pd(CAN_RX_msg.id, HEX);
+  //   } else {
+  //     p("Standard ID: 0x");
+  //     if (CAN_RX_msg.id < 0x100)      p("0");
+  //     if (CAN_RX_msg.id < 0x10)       p("0");
+  //     pd(CAN_RX_msg.id, HEX);
+  //     p("     ");
+  //   }
 
-    p(" DLC: ");
-    p(CAN_RX_msg.len);
-    if (CAN_RX_msg.type == DATA_FRAME) {
-      p(" Data: ");
-      for(int i=0; i<CAN_RX_msg.len; i++) {
-        p("0x"); 
-        pd(CAN_RX_msg.data[i], HEX); 
-        if (i != (CAN_RX_msg.len-1))  p(" ");
-      }
-      pl();
-    } else {
-      pl(" Data: REMOTE REQUEST FRAME");
-    }
-  }
+  //   p(" DLC: ");
+  //   p(CAN_RX_msg.len);
+  //   if (CAN_RX_msg.type == DATA_FRAME) {
+  //     p(" Data: ");
+  //     for(int i=0; i<CAN_RX_msg.len; i++) {
+  //       p("0x"); 
+  //       pd(CAN_RX_msg.data[i], HEX); 
+  //       if (i != (CAN_RX_msg.len-1))  p(" ");
+  //     }
+  //     pl();
+  //   } else {
+  //     pl(" Data: REMOTE REQUEST FRAME");
+  //   }
+  // }
     
   
 

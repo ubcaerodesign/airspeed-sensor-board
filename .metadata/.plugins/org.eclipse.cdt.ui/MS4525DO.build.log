@@ -1,17 +1,10 @@
-22:40:53 **** Incremental Build of configuration Release for project MS4525DO ****
+20:17:46 **** Incremental Build of configuration Debug for project MS4525DO ****
 make -j8 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: MS4525DO.elf
- 
 arm-none-eabi-size  MS4525DO.elf 
-arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
    text	   data	    bss	    dec	    hex	filename
-  14872	    120	   2128	  17120	   42e0	MS4525DO.elf
+  29344	    488	   2128	  31960	   7cd8	MS4525DO.elf
 Finished building: default.size.stdout
  
-Finished building: MS4525DO.list
- 
 
-22:40:53 Build Finished. 0 errors, 0 warnings. (took 603ms)
+20:17:46 Build Finished. 0 errors, 0 warnings. (took 278ms)
 

@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,7 +36,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define PRINTF_OVERLOAD
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -56,15 +56,6 @@ static void MX_GPIO_Init(void);
 static void MX_CAN_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-#ifdef PRINTF_OVERLOAD
-// Use the handle for the UART you configured (e.g., huart1)
-extern UART_HandleTypeDef huart1;
-int _write(int file, char *data, int len) {
-    // Transmit data via UART
-    HAL_UART_Transmit(&huart1, (uint8_t*)data, len, HAL_MAX_DELAY);
-    return len;
-}
-#endif
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
@@ -78,6 +69,32 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
   printf("%u, ",RxData[1]);
   printf("%u, ",RxData[2]);
   printf("%u \r\n",RxData[3]);
+}
+#ifdef PRINTF_OVERLOAD
+// Use the handle for the UART you configured (e.g., huart1)
+extern UART_HandleTypeDef huart1;
+int _write(int file, char *data, int len) {
+    // Transmit data via UART
+    HAL_UART_Transmit(&huart1, (uint8_t*)data, len, HAL_MAX_DELAY);
+    return len;
+}
+#endif
+void CAN_ReceiveMessage(CAN_HandleTypeDef *hcan)
+{
+	if (HAL_CAN_GetRxFifoFillLevel(&hcan, CAN_RX_FIFO0) > 0) {
+	    // FIFO contains messages
+	    CAN_RxHeaderTypeDef rxHeader;
+	    uint8_t rxData[8];
+
+	    if (HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &rxHeader, rxData) == HAL_OK) {
+	        // Process received message
+	        printf("Message received: %s\n", rxData);
+	    }
+	} else {
+	    printf("No message received\n");
+	}
+	uint32_t error = HAL_CAN_GetError(&hcan);
+	printf("CAN Error: 0x%08lX\r\n", error);
 }
 /* USER CODE END PFP */
 
@@ -125,9 +142,10 @@ int main(void)
   Scanfilter.FilterIdLow = 0x0000;
   Scanfilter.FilterMaskIdHigh = 0x0000;
   Scanfilter.FilterMaskIdLow = 0x0000;
-  Scanfilter.FilterMode = CAN_FILTERMODE_IDMASK;
+  Scanfilter.FilterMode = CAN_FILTERMODE_IDLIST; //mask mode?
   Scanfilter.FilterScale = CAN_FILTERSCALE_32BIT;
   Scanfilter.SlaveStartFilterBank = 14; //<-- not needed for single instances
+
   if(HAL_CAN_ConfigFilter(&hcan, &Scanfilter) != HAL_OK) {
 	  printf("cannot configure CAN filter \n\r");
   } else {
@@ -147,7 +165,9 @@ int main(void)
 //	  uint32_t RxFIFO_level = HAL_CAN_GetRxFifoFillLevel(&hcan, CAN_RX_FIFO0);
 //	  printf("%u \r\n", RxFIFO_level);
 
-	  HAL_CAN_RxFifo0MsgPendingCallback(&hcan);
+//	  HAL_CAN_RxFifo0MsgPendingCallback(&hcan);
+	  CAN_ReceiveMessage(&hcan);
+//	  printf("hello world! \n\r");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -207,15 +227,15 @@ static void MX_CAN_Init(void)
 
   /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
-  hcan.Init.Prescaler = 16;
+  hcan.Init.Prescaler = 1;
   hcan.Init.Mode = CAN_MODE_NORMAL;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan.Init.TimeTriggeredMode = DISABLE;
-  hcan.Init.AutoBusOff = DISABLE;
+  hcan.Init.AutoBusOff = ENABLE;
   hcan.Init.AutoWakeUp = DISABLE;
-  hcan.Init.AutoRetransmission = DISABLE;
+  hcan.Init.AutoRetransmission = ENABLE;
   hcan.Init.ReceiveFifoLocked = DISABLE;
   hcan.Init.TransmitFifoPriority = DISABLE;
   if (HAL_CAN_Init(&hcan) != HAL_OK)
