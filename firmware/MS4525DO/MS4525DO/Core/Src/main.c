@@ -101,9 +101,11 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  printf("ASSCHEEKS ASSCHEEKS ASSCHEEKS\r\n");
+  //Initialize Airspeed Sensor
   struct MS4525DO_t MS4525DO;
   MS4525DO_Initialize(&MS4525DO, &hi2c1);
+
+  //IDK
   uint8_t tx_data[8];
   double airspeed; // not calibrated
   double received_double;
@@ -129,16 +131,16 @@ int main(void)
 
 		memcpy(tx_data, &airspeed, sizeof(double));
 		send_can_message(tx_data);
-		if (can_message_ready){
-		  print_last_rx();
-		  memcpy(&received_double, last_rx_data, sizeof(double));
+		//if (can_message_ready){
+		  //print_last_rx();
+		 // memcpy(&received_double, last_rx_data, sizeof(double));
 
 		  // Print the result
-		  printf("Received double over CAN: %f \r\n", received_double);
+		  //printf("Received double over CAN: %f \r\n", received_double);
 		  //can_message_ready = 0;
-		}
+		//}
 
-		HAL_Delay(1000);
+		HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
