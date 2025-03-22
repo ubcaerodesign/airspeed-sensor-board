@@ -2,7 +2,7 @@
  * MS4525DO.h
  *
  *  Created on: Oct 26, 2024
- *      Author: chant
+ *      Author: chant, ella
  */
 
 //Datasheet: https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Data+Sheet%7FMS4525DO%7FB10%7Fpdf%7FEnglish%7FENG_DS_MS4525DO_B10.pdf%7FCAT-BLPS0002
@@ -25,8 +25,7 @@
 #define AIR_DENSITY			 	(double) 1.225 //kg/m^3
 
 //#define VERBOSE_MODE_EN //uncomment to enable verbose debug mode
-//#define WIND_TUNNEL_EN //uncomment to enable wind tunnel calibration features (enabled during wind tunnel only)
-#define PRINTF_OVERLOAD //uncomment to have printf print to serial
+#define WIND_TUNNEL_EN //uncomment to enable wind tunnel calibration features (enabled during wind tunnel only)
 
 /*CALIBRATION PARAMETERS*/
 //record betz reading in wind tunnel and raw pressure counts (decimal) from 200RPM to 550RPM in 50 RPM increments
@@ -66,14 +65,8 @@ struct processed_t {
 	double airspeed_mps; /*range: */
 	double airspeed_calibrated_mps;
 };
-/*data to be sent over via CAN*/
-struct CAN_payload_t {
-	uint16_t airspeed_deca_mps;		//conversion = deca
-	uint16_t temperature_deca_C;	//conversion = deca
-	//more flags to be added
-	uint8_t is_stale: 1;			//data freshness
-	uint8_t i2c_comms_error: 1;		//data validity
-};
+
+
 /*I2C read status codes - see MS4525DO interface manual*/
 typedef enum {
 	normal,
@@ -85,17 +78,14 @@ typedef enum {
 
 struct MS4525DO_t {
 	I2C_HandleTypeDef *i2c_handle;
-	CAN_HandleTypeDef *can_handle;
-	CAN_TxHeaderTypeDef *canTx_handle;
 	SensorStatus sensor_status;
 	struct raw_t raw_data;
 	struct processed_t processed_data;
-	struct CAN_payload_t CAN_package;
 };
 
-void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *TxHeader);
+void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c);
 void read_MS4525DO(struct MS4525DO_t *pSensor);
 double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed);
 double calibrate_airspeed_LUT(uint16_t raw_pressure);
-void txCAN(struct MS4525DO_t *pSensor);
-#endif /* INC_MS4525DO_H_ */
+
+#endif

@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "MS4525DO.h"
+#include "can_helper.h"
+#include "config.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -48,7 +50,6 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-CAN_TxHeaderTypeDef TxHeader;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,22 +100,45 @@ int main(void)
   MX_CAN_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  printf("ASSCHEEKS ASSCHEEKS ASSCHEEKS\r\n");
   struct MS4525DO_t MS4525DO;
-  MS4525DO_Initialize(&MS4525DO, &hi2c1, &hcan, &TxHeader);
-//  void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c, CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *TxHeader)
+  MS4525DO_Initialize(&MS4525DO, &hi2c1);
+  uint8_t tx_data[8];
+  double airspeed; // not calibrated
+  double received_double;
+  extern uint8_t last_rx_data[8];
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  read_MS4525DO(&MS4525DO);
-	  txCAN(&MS4525DO);
-
-	  //THIS IS A TEST!
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
+		  //printf("Scanning I2C bus...\n");
+		  //for (uint8_t addr = 0; addr < 127; addr++) {
+		//	  if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 100) == HAL_OK) {
+		//		  printf("Found device at address 0x%02X\r\n", addr);
+		//	  }
+		 // }
+
+	  	airspeed = MS4525DO.processed_data.airspeed_mps;
+		read_MS4525DO(&MS4525DO);
+		printf("Airspeed: %.2f m/s \r\n", airspeed );
+
+		memcpy(tx_data, &airspeed, sizeof(double));
+		send_can_message(tx_data);
+		if (can_message_ready){
+		  print_last_rx();
+		  memcpy(&received_double, last_rx_data, sizeof(double));
+
+		  // Print the result
+		  printf("Received double over CAN: %f \r\n", received_double);
+		  //can_message_ready = 0;
+		}
+
+		HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -131,10 +155,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -144,12 +171,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -171,10 +198,10 @@ static void MX_CAN_Init(void)
 
   /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
-  hcan.Init.Prescaler = 1;
-  hcan.Init.Mode = CAN_MODE_NORMAL;
+  hcan.Init.Prescaler = 4;
+  hcan.Init.Mode = CAN_MODE_LOOPBACK;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan.Init.TimeSeg1 = CAN_BS1_15TQ;
   hcan.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan.Init.TimeTriggeredMode = DISABLE;
   hcan.Init.AutoBusOff = ENABLE;
@@ -187,7 +214,33 @@ static void MX_CAN_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN_Init 2 */
+  CAN_FilterTypeDef canFilterConfig;
 
+  canFilterConfig.FilterBank = 0;                         // Use filter bank 0
+  canFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;    // Use mask mode
+  canFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;   // 32-bit scale
+  canFilterConfig.FilterIdHigh = 0x0000;                 // ID doesn't matter
+  canFilterConfig.FilterIdLow  = 0x0000;
+  canFilterConfig.FilterMaskIdHigh = 0x0000;             // Mask = 0 = ignore all bits = allow all
+  canFilterConfig.FilterMaskIdLow  = 0x0000;
+  canFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;   // Put accepted messages in FIFO0
+  canFilterConfig.FilterActivation = ENABLE;
+  canFilterConfig.SlaveStartFilterBank = 14;
+
+  // Enable Filter
+  if (HAL_CAN_ConfigFilter(&hcan, &canFilterConfig) != HAL_OK) {
+      Error_Handler();
+  }
+
+  // Start CAN peripheral
+  if (HAL_CAN_Start(&hcan) != HAL_OK) {
+      Error_Handler();  // or print error
+  }
+
+  // Enable RX FIFO 0 message pending interrupt
+  if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+      Error_Handler();  // or print error
+  }
   /* USER CODE END CAN_Init 2 */
 
 }
@@ -242,7 +295,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
