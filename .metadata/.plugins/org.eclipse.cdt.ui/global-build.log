@@ -1,52 +1,50 @@
-17:38:06 **** Incremental Build of configuration Debug for project STM_Transmit ****
+16:03:23 **** Incremental Build of configuration Debug for project MS4525DO ****
 make -j8 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c: In function 'CAN_Tx':
-../Core/Src/main.c:85:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
-   85 |         printf("Transmit not ok \n\r");
-      |         ^~~~~~
-../Core/Src/main.c:21:1: note: include '<stdio.h>' or provide a declaration of 'printf'
-   20 | #include "main.h"
+arm-none-eabi-size  MS4525DO.elf 
+   text	   data	    bss	    dec	    hex	filename
+  54324	    492	  11060	  65876	  10154	MS4525DO.elf
+Finished building: default.size.stdout
+ 
+16:03:33 **** Incremental Build of configuration Release for project MS4525DO ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/sd_card.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/sd_card.d" -MT"Core/Src/sd_card.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/sd_card.o"
+../Core/Src/sd_card.c: In function 'save_sd':
+../Core/Src/sd_card.c:9:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+    9 |     printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
+      |     ^~~~~~
+../Core/Src/sd_card.c:8:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    7 | #include "sd_card.h"
   +++ |+#include <stdio.h>
-   21 | 
-../Core/Src/main.c:85:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
-   85 |         printf("Transmit not ok \n\r");
-      |         ^~~~~~
-../Core/Src/main.c:85:9: note: include '<stdio.h>' or provide a declaration of 'printf'
-../Core/Src/main.c: In function 'HAL_CAN_RxFifo0MsgPendingCallback':
-../Core/Src/main.c:96:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
-   96 |         printf("Received CAN message: ID=0x%X, Data= %X %X %X %X %X %X %X %X\n",
-      |         ^~~~~~
-../Core/Src/main.c:96:9: note: include '<stdio.h>' or provide a declaration of 'printf'
-../Core/Src/main.c:96:45: warning: format '%X' expects argument of type 'unsigned int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
-   96 |         printf("Received CAN message: ID=0x%X, Data= %X %X %X %X %X %X %X %X\n",
-      |                                            ~^
-      |                                             |
-      |                                             unsigned int
-      |                                            %lX
-   97 |                RxHeader.StdId, RxData[0], RxData[1], RxData[2], RxData[3],
-      |                ~~~~~~~~~~~~~~                
-      |                        |
-      |                        uint32_t {aka long unsigned int}
-../Core/Src/main.c:100:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
-  100 |         printf("Receive not ok \n\r");
-      |         ^~~~~~
-../Core/Src/main.c:100:9: note: include '<stdio.h>' or provide a declaration of 'printf'
-arm-none-eabi-gcc -o "STM_Transmit.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\STM_Transmit\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM_Transmit.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: STM_Transmit.elf
+    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+../Core/Src/sd_card.c:9:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+    9 |     printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
+      |     ^~~~~~
+../Core/Src/sd_card.c:9:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+../Core/Src/sd_card.c:21:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+   21 |     snprintf(data_buffer, sizeof(data_buffer),
+      |     ^~~~~~~~
+../Core/Src/sd_card.c:21:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Core/Src/sd_card.c:21:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+../Core/Src/sd_card.c:21:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40:46: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+      |                                              ^~~~~~
+../Core/Src/sd_card.c:8:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    7 | #include "sd_card.h"
+  +++ |+#include <string.h>
+    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+../Core/Src/sd_card.c:40:46: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+      |                                              ^~~~~~
+../Core/Src/sd_card.c:40:46: note: include '<string.h>' or provide a declaration of 'strlen'
+arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MS4525DO.elf
  
-arm-none-eabi-size  STM_Transmit.elf 
-arm-none-eabi-objdump -h -S STM_Transmit.elf  > "STM_Transmit.list"
+arm-none-eabi-size  MS4525DO.elf 
+arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
    text	   data	    bss	    dec	    hex	filename
-  11852	    104	   2016	  13972	   3694	STM_Transmit.elf
+  27828	    128	  11056	  39012	   9864	MS4525DO.elf
 Finished building: default.size.stdout
  
-Finished building: STM_Transmit.list
- 
-17:38:22 **** Incremental Build of configuration Debug for project STM_Transmit ****
-make -j8 all 
-arm-none-eabi-size  STM_Transmit.elf 
-   text	   data	    bss	    dec	    hex	filename
-  11852	    104	   2016	  13972	   3694	STM_Transmit.elf
-Finished building: default.size.stdout
+Finished building: MS4525DO.list
  

@@ -1,0 +1,17 @@
+/*
+ * sd_card.c
+ *
+ *  Created on: Apr 6, 2025
+ *      Author: chant
+ */
+#include "sd_card.h"
+
+/**
+ * GLOBAL
+ */
+FRESULT res;
+
+void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+
+}
+

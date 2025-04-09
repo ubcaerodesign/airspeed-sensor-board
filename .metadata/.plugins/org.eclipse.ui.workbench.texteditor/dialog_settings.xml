@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<item key="replaceBarOpen" value="false"/>
+	<list key="searchhistory">
+		<item value="user code begin 2"/>
+		<item value="user code"/>
+		<item value="f_lseek"/>
+		<item value=".csv"/>
+		<item value="file"/>
+		<item value="user code begin 0"/>
+	</list>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="selection" value="Activate"/>
 		<item key="wrap" value="true"/>

@@ -1,0 +1,41 @@
+/*
+ * sd_card.c
+ *
+ *  Created on: Apr 6, 2025
+ *      Author: chant
+ */
+#include "sd_card.h"
+#include "fatfs.h"
+void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+    FIL file_obj;           // File object
+    FRESULT result;         // FatFs result code
+    UINT bytes_written;     // Number of bytes written
+    char data_buffer[128];  // Buffer to hold formatted string
+
+    // Get the elapsed time (in milliseconds) since the system started
+    uint32_t tick = HAL_GetTick();
+
+    // Format the tick and data into a CSV formatted string.
+    // Format: tick,airspeed,calibrated_airspeed,raw_pressure
+    snprintf(data_buffer, sizeof(data_buffer),
+             "%lu,%.2f,%.2f,%hu\r\n",
+             tick, airspeed, calibrated_airspeed, raw_pressure);
+
+    // Open the file in append mode (create it if it doesn't exist)
+    result = f_open(&file_obj, "airspeed.csv", FA_OPEN_APPEND | FA_WRITE);
+    if (result != FR_OK) {
+        // Handle file open error
+        return;
+    }
+
+    // Write the formatted string to the file
+    result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+    if (result != FR_OK) {
+        // Handle write error and close file
+        f_close(&file_obj);
+        return;
+    }
+
+    // Close the file to ensure data is saved properly
+    f_close(&file_obj);
+}
