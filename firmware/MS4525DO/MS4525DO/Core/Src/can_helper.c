@@ -44,11 +44,12 @@ void send_can_message(uint8_t txData[8]) {
     tx_header.DLC = 8;
     tx_header.TransmitGlobalTime = DISABLE;
 
-    if (HAL_CAN_AddTxMessage(&hcan, &tx_header, txData, &tx_mailbox) != HAL_OK){
-        printf("❌ CAN TX failed\r\n");
-    } else {
-        printf("✅ CAN Message Sent!\r\n");
-    }
+    //Commented out printf to test if SD card crashes
+//    if (HAL_CAN_AddTxMessage(&hcan, &tx_header, txData, &tx_mailbox) != HAL_OK){
+//        printf("❌ CAN TX failed\r\n");
+//    } else {
+//        printf("✅ CAN Message Sent!\r\n");
+//    }
 }
 
 

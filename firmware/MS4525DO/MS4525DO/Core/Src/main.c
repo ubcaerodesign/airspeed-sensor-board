@@ -113,7 +113,7 @@ int main(void)
   f_mount(&fs, "", 0);
   f_open(&fil, "write.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
   f_lseek(&fil, fil.fsize);
-  f_puts("Hello from Nizar\n", &fil);
+  f_puts("test\n", &fil);
   f_close(&fil);
   //Initialize Airspeed Sensor
   struct MS4525DO_t MS4525DO;
@@ -166,6 +166,8 @@ int main(void)
 
 		/*save to SD card*/
 		save_sd(airspeed, calibrated_airspeed, raw_pressure);
+		/*NOTE: recommend commenting out instances of printing to serial to avoid code freezing after
+		  running for a couple mins*/
   }
   /* USER CODE END 3 */
 }

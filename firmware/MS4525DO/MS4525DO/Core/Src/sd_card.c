@@ -6,8 +6,8 @@
  */
 #include "sd_card.h"
 void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
-    printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
-           airspeed, calibrated_airspeed, raw_pressure);
+//    printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
+//           airspeed, calibrated_airspeed, raw_pressure);
     FIL file_obj;           // File object
     FRESULT result;         // FatFs result code
     UINT bytes_written;     // Number of bytes written

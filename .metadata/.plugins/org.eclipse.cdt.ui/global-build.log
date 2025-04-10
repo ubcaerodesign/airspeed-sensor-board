@@ -1,30 +1,20 @@
-16:03:23 **** Incremental Build of configuration Debug for project MS4525DO ****
+17:14:17 **** Incremental Build of configuration Debug for project MS4525DO ****
 make -j8 all 
-arm-none-eabi-size  MS4525DO.elf 
-   text	   data	    bss	    dec	    hex	filename
-  54324	    492	  11060	  65876	  10154	MS4525DO.elf
-Finished building: default.size.stdout
- 
-16:03:33 **** Incremental Build of configuration Release for project MS4525DO ****
-make -j8 all 
-arm-none-eabi-gcc "../Core/Src/sd_card.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/sd_card.d" -MT"Core/Src/sd_card.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/sd_card.o"
+arm-none-eabi-gcc "../Core/Src/MS4525DO.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/MS4525DO.d" -MT"Core/Src/MS4525DO.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/MS4525DO.o"
+arm-none-eabi-gcc "../Core/Src/can_helper.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/can_helper.d" -MT"Core/Src/can_helper.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/can_helper.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/sd_card.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/sd_card.d" -MT"Core/Src/sd_card.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/sd_card.o"
 ../Core/Src/sd_card.c: In function 'save_sd':
-../Core/Src/sd_card.c:9:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
-    9 |     printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
-      |     ^~~~~~
-../Core/Src/sd_card.c:8:1: note: include '<stdio.h>' or provide a declaration of 'printf'
-    7 | #include "sd_card.h"
-  +++ |+#include <stdio.h>
-    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
-../Core/Src/sd_card.c:9:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
-    9 |     printf("Airspeed: %.2f, Calibrated Airspeed: %.2f, Raw Pressure: %hu\r\n",
-      |     ^~~~~~
-../Core/Src/sd_card.c:9:5: note: include '<stdio.h>' or provide a declaration of 'printf'
 ../Core/Src/sd_card.c:21:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
    21 |     snprintf(data_buffer, sizeof(data_buffer),
       |     ^~~~~~~~
-../Core/Src/sd_card.c:21:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Core/Src/sd_card.c:8:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    7 | #include "sd_card.h"
+  +++ |+#include <stdio.h>
+    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
 ../Core/Src/sd_card.c:21:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+   21 |     snprintf(data_buffer, sizeof(data_buffer),
+      |     ^~~~~~~~
 ../Core/Src/sd_card.c:21:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
 ../Core/Src/sd_card.c:40:46: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
    40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
@@ -37,14 +27,149 @@ arm-none-eabi-gcc "../Core/Src/sd_card.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_D
    40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
       |                                              ^~~~~~
 ../Core/Src/sd_card.c:40:46: note: include '<string.h>' or provide a declaration of 'strlen'
+../Core/Src/can_helper.c: In function 'send_can_message':
+../Core/Src/can_helper.c:38:14: warning: unused variable 'tx_mailbox' [-Wunused-variable]
+   38 |     uint32_t tx_mailbox;
+      |              ^~~~~~~~~~
+../Core/Src/can_helper.c:37:25: warning: variable 'tx_header' set but not used [-Wunused-but-set-variable]
+   37 |     CAN_TxHeaderTypeDef tx_header;
+      |                         ^~~~~~~~~
+../Core/Src/can_helper.c: In function 'print_last_rx':
+../Core/Src/can_helper.c:58:40: warning: format '%X' expects argument of type 'unsigned int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   58 |         printf("📥 Received CAN ID: 0x%X, Data: ", last_rx_id);
+      |                                       ~^           ~~~~~~~~~~
+      |                                        |           |
+      |                                        |           uint32_t {aka long unsigned int}
+      |                                        unsigned int
+      |                                       %lX
+../Core/Src/MS4525DO.c: In function 'read_MS4525DO':
+../Core/Src/MS4525DO.c:29:27: warning: unused variable 'i2c_status' [-Wunused-variable]
+   29 |         HAL_StatusTypeDef i2c_status = HAL_I2C_Master_Receive(pSensor->i2c_handle, ADDRESS_I2C_MS4525DO << 1, data_buffer, sizeof(data_buffer), HAL_MAX_DELAY);
+      |                           ^~~~~~~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:154:17: warning: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+  154 |                 memcpy(tx_data, &airspeed, sizeof(double));
+      |                 ^~~~~~
+../Core/Src/main.c:30:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+   29 | #include "config.h"
+  +++ |+#include <string.h>
+   30 | #include <stdio.h>
+../Core/Src/main.c:154:17: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+  154 |                 memcpy(tx_data, &airspeed, sizeof(double));
+      |                 ^~~~~~
+../Core/Src/main.c:154:17: note: include '<string.h>' or provide a declaration of 'memcpy'
+../Core/Src/main.c:130:18: warning: unused variable 'last_rx_data' [-Wunused-variable]
+  130 |   extern uint8_t last_rx_data[8];
+      |                  ^~~~~~~~~~~~
+../Core/Src/main.c:129:10: warning: unused variable 'received_double' [-Wunused-variable]
+  129 |   double received_double;
+      |          ^~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: MS4525DO.elf
+ 
+arm-none-eabi-size  MS4525DO.elf 
+arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
+   text	   data	    bss	    dec	    hex	filename
+  53324	    492	  11060	  64876	   fd6c	MS4525DO.elf
+Finished building: default.size.stdout
+ 
+Finished building: MS4525DO.list
+ 
+17:14:22 **** Incremental Build of configuration Release for project MS4525DO ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/MS4525DO.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/MS4525DO.d" -MT"Core/Src/MS4525DO.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/MS4525DO.o"
+arm-none-eabi-gcc "../Core/Src/can_helper.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/can_helper.d" -MT"Core/Src/can_helper.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/can_helper.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/sd_card.c" -mcpu=cortex-m3 -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -Os -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/sd_card.d" -MT"Core/Src/sd_card.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/sd_card.o"
+../Core/Src/MS4525DO.c: In function 'read_MS4525DO':
+../Core/Src/MS4525DO.c:29:27: warning: unused variable 'i2c_status' [-Wunused-variable]
+   29 |         HAL_StatusTypeDef i2c_status = HAL_I2C_Master_Receive(pSensor->i2c_handle, ADDRESS_I2C_MS4525DO << 1, data_buffer, sizeof(data_buffer), HAL_MAX_DELAY);
+      |                           ^~~~~~~~~~
+../Core/Src/sd_card.c: In function 'save_sd':
+../Core/Src/sd_card.c:21:5: warning: implicit declaration of function 'snprintf' [-Wimplicit-function-declaration]
+   21 |     snprintf(data_buffer, sizeof(data_buffer),
+      |     ^~~~~~~~
+../Core/Src/sd_card.c:8:1: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+    7 | #include "sd_card.h"
+  +++ |+#include <stdio.h>
+    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+../Core/Src/sd_card.c:21:5: warning: incompatible implicit declaration of built-in function 'snprintf' [-Wbuiltin-declaration-mismatch]
+   21 |     snprintf(data_buffer, sizeof(data_buffer),
+      |     ^~~~~~~~
+../Core/Src/sd_card.c:21:5: note: include '<stdio.h>' or provide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40:46: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+      |                                              ^~~~~~
+../Core/Src/sd_card.c:8:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    7 | #include "sd_card.h"
+  +++ |+#include <string.h>
+    8 | void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+../Core/Src/sd_card.c:40:46: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   40 |     result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+      |                                              ^~~~~~
+../Core/Src/sd_card.c:40:46: note: include '<string.h>' or provide a declaration of 'strlen'
+../Core/Src/can_helper.c: In function 'send_can_message':
+../Core/Src/can_helper.c:38:14: warning: unused variable 'tx_mailbox' [-Wunused-variable]
+   38 |     uint32_t tx_mailbox;
+      |              ^~~~~~~~~~
+../Core/Src/can_helper.c:37:25: warning: variable 'tx_header' set but not used [-Wunused-but-set-variable]
+   37 |     CAN_TxHeaderTypeDef tx_header;
+      |                         ^~~~~~~~~
+../Core/Src/can_helper.c: In function 'print_last_rx':
+../Core/Src/can_helper.c:58:40: warning: format '%X' expects argument of type 'unsigned int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   58 |         printf("📥 Received CAN ID: 0x%X, Data: ", last_rx_id);
+      |                                       ~^           ~~~~~~~~~~
+      |                                        |           |
+      |                                        |           uint32_t {aka long unsigned int}
+      |                                        unsigned int
+      |                                       %lX
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:154:17: warning: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]
+  154 |                 memcpy(tx_data, &airspeed, sizeof(double));
+      |                 ^~~~~~
+../Core/Src/main.c:30:1: note: include '<string.h>' or provide a declaration of 'memcpy'
+   29 | #include "config.h"
+  +++ |+#include <string.h>
+   30 | #include <stdio.h>
+../Core/Src/main.c:154:17: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]
+  154 |                 memcpy(tx_data, &airspeed, sizeof(double));
+      |                 ^~~~~~
+../Core/Src/main.c:154:17: note: include '<string.h>' or provide a declaration of 'memcpy'
+../Core/Src/main.c:130:18: warning: unused variable 'last_rx_data' [-Wunused-variable]
+  130 |   extern uint8_t last_rx_data[8];
+      |                  ^~~~~~~~~~~~
+../Core/Src/main.c:129:10: warning: unused variable 'received_double' [-Wunused-variable]
+  129 |   double received_double;
+      |          ^~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: MS4525DO.elf
  
 arm-none-eabi-size  MS4525DO.elf 
 arm-none-eabi-objdump -h -S MS4525DO.elf  > "MS4525DO.list"
    text	   data	    bss	    dec	    hex	filename
-  27828	    128	  11056	  39012	   9864	MS4525DO.elf
+  24560	    116	  11052	  35728	   8b90	MS4525DO.elf
 Finished building: default.size.stdout
  
 Finished building: MS4525DO.list
+ 
+17:16:00 **** Incremental Build of configuration Debug for project MS4525DO ****
+make -j8 all 
+arm-none-eabi-size  MS4525DO.elf 
+   text	   data	    bss	    dec	    hex	filename
+  53324	    492	  11060	  64876	   fd6c	MS4525DO.elf
+Finished building: default.size.stdout
+ 
+17:16:01 **** Incremental Build of configuration Debug for project STM3210E_EVAL ****
+make all 
+arm-none-eabi-size  STM3210E_EVAL.elf 
+   text	   data	    bss	    dec	    hex	filename
+  69568	   1200	  30080	 100848	  189f0	STM3210E_EVAL.elf
+Finished building: default.size.stdout
+ 
+17:16:03 **** Incremental Build of configuration Release for project MS4525DO ****
+make -j8 all 
+arm-none-eabi-size  MS4525DO.elf 
+   text	   data	    bss	    dec	    hex	filename
+  24560	    116	  11052	  35728	   8b90	MS4525DO.elf
+Finished building: default.size.stdout
  

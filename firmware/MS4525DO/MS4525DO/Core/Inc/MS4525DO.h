@@ -25,7 +25,7 @@
 #define AIR_DENSITY			 	(double) 1.225 //kg/m^3
 
 //#define VERBOSE_MODE_EN //uncomment to enable verbose debug mode
-#define WIND_TUNNEL_EN //uncomment to enable wind tunnel calibration features (enabled during wind tunnel only)
+//#define WIND_TUNNEL_EN //uncomment to enable wind tunnel calibration features (enabled during wind tunnel only)
 
 /*CALIBRATION PARAMETERS*/
 //record betz reading in wind tunnel and raw pressure counts (decimal) from 200RPM to 550RPM in 50 RPM increments
