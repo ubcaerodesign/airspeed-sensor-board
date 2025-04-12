@@ -119,6 +119,7 @@ int main(void)
   struct MS4525DO_t MS4525DO;
   MS4525DO_Initialize(&MS4525DO, &hi2c1);
 
+  printf("Setup Complete\r\n");
   //IDK
   uint8_t tx_data[8];
 
@@ -148,10 +149,10 @@ int main(void)
 		airspeed = MS4525DO.processed_data.airspeed_mps;
 		calibrated_airspeed = MS4525DO.processed_data.airspeed_calibrated_mps;
 		raw_pressure = MS4525DO.raw_data.pressure;
-//		printf("Airspeed: %.2f m/s \r\n", airspeed );
+		//printf("Airspeed: %.2f m/s \r\n", airspeed );
 
 		/*transmit CAN*/
-		memcpy(tx_data, &airspeed, sizeof(double));
+		memcpy(tx_data, &calibrated_airspeed, sizeof(double));
 		send_can_message(tx_data);
 		//if (can_message_ready){
 		  //print_last_rx();
