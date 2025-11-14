@@ -22,9 +22,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "MS4525DO.h"
 #include "can_helper.h"
 #include "sd_card.h"
+#include "bno055.h"
+#include "logger.h"
+#include "sensors.h"
+#include "ms4525do.h"
+#include "config.h"
 //#include <string.h>
 #include "config.h"
 #include <stdio.h>
@@ -50,12 +54,14 @@ FIL fil;
 CAN_HandleTypeDef hcan;
 
 I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c2;
 
 SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+extern sensor_data_t sensor_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,6 +71,7 @@ static void MX_I2C1_Init(void);
 static void MX_CAN_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_I2C2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -108,27 +115,37 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   MX_FATFS_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_Delay(500);
+  HAL_Delay(100);
+  printf("Beginning Setup\r\n");
+
+  // Initialize log file
+  logger_init(&huart1, LOG_DEBUG);
+
+  // Initialize SD card
   f_mount(&fs, "", 0);
-  f_open(&fil, "write.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+
+  // Create airspeed.txt file
+  f_open(&fil, "airspeed.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
   f_lseek(&fil, fil.fsize);
-  f_puts("test\n", &fil);
-  f_close(&fil);
-  //Initialize Airspeed Sensor
-  struct MS4525DO_t MS4525DO;
-  MS4525DO_Initialize(&MS4525DO, &hi2c1);
+
+  // Initialize Airspeed Sensor
+  ms4525d0_init(MS4525D0_I2C);
+  printf("Airspeed Sensor Initialized\r\n");
+
+  // Initilaize BNO055
+  bno055_init();
+  printf("BNO055 Initialized\r\n");
+  //bno055_calibration_routine();
+  //printf("Calibration Routine Complete\r\n");
+  bno055_load_calibration_data_sd();
+  printf("Calibration Data Loaded\r\n");
+
 
   printf("Setup Complete\r\n");
   //IDK
   uint8_t tx_data[8];
-
-  double airspeed;	//uncalibrated
-  double calibrated_airspeed;
-  uint16_t raw_pressure;
-
-  double received_double;
-  extern uint8_t last_rx_data[8];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -138,37 +155,19 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		  //printf("Scanning I2C bus...\n");
-		  //for (uint8_t addr = 0; addr < 127; addr++) {
-		//	  if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 100) == HAL_OK) {
-		//		  printf("Found device at address 0x%02X\r\n", addr);
-		//	  }
-		 // }
-
-		read_MS4525DO(&MS4525DO);
-		airspeed = MS4525DO.processed_data.airspeed_mps;
-		calibrated_airspeed = MS4525DO.processed_data.airspeed_calibrated_mps;
-		raw_pressure = MS4525DO.raw_data.pressure;
-		//printf("Airspeed: %.2f m/s \r\n", airspeed );
+	  	read_ms4525do();
+		bno055_flush();
+		populate_sensor_data(&sensor_data);
 
 		/*transmit CAN*/
-		memcpy(tx_data, &calibrated_airspeed, sizeof(double));
+		memcpy(tx_data, &sensor_data.airspeed_mps, sizeof(double));
 		send_can_message(tx_data);
-		//if (can_message_ready){
-		  //print_last_rx();
-		 // memcpy(&received_double, last_rx_data, sizeof(double));
 
-		  // Print the result
-		  //printf("Received double over CAN: %f \r\n", received_double);
-		  //can_message_ready = 0;
-		//}
+		LOG_MESSAGE(LOG_INFO, "Saving sensor data");
+		save_sensors_sd(&sensor_data);
 
-//		HAL_Delay(500); //not needed for now
+		HAL_Delay(100);
 
-		/*save to SD card*/
-		save_sd(airspeed, calibrated_airspeed, raw_pressure);
-		/*NOTE: recommend commenting out instances of printing to serial to avoid code freezing after
-		  running for a couple mins*/
   }
   /* USER CODE END 3 */
 }
@@ -306,6 +305,40 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief I2C2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C2_Init(void)
+{
+
+  /* USER CODE BEGIN I2C2_Init 0 */
+
+  /* USER CODE END I2C2_Init 0 */
+
+  /* USER CODE BEGIN I2C2_Init 1 */
+
+  /* USER CODE END I2C2_Init 1 */
+  hi2c2.Instance = I2C2;
+  hi2c2.Init.ClockSpeed = 100000;
+  hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c2.Init.OwnAddress1 = 0;
+  hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c2.Init.OwnAddress2 = 0;
+  hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c2.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C2_Init 2 */
+
+  /* USER CODE END I2C2_Init 2 */
 
 }
 
@@ -471,8 +504,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

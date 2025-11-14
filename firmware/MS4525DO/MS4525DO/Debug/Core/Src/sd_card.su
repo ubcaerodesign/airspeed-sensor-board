@@ -1,1 +1,4 @@
-../Core/Src/sd_card.c:8:6:save_sd	4336	static
+../Core/Src/sd_card.c:14:6:save_sensors_sd	504	static
+../Core/Src/sd_card.c:62:9:sd_log_line_to_file	24	static
+../Core/Src/sd_card.c:81:9:sd_append	24	static
+../Core/Src/sd_card.c:108:16:mount_sd_card	8	static

@@ -1,4 +1,2 @@
-../Core/Src/MS4525DO.c:13:6:MS4525DO_Initialize	0	static
-../Core/Src/MS4525DO.c:145:8:calibrate_airspeed_LUT	0	static
-../Core/Src/MS4525DO.c:117:8:calibrate_airspeed	8	static
-../Core/Src/MS4525DO.c:27:6:read_MS4525DO	40	static
+../Core/Src/ms4525do.c:13:6:ms4525d0_init	0	static
+../Core/Src/ms4525do.c:25:6:read_ms4525do	40	static

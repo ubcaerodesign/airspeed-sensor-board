@@ -1,0 +1,2 @@
+../Core/Src/logger.c:25:6:logger_init	0	static
+../Core/Src/logger.c:31:6:log_message	732	static

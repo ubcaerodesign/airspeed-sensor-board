@@ -1,4 +1,4 @@
-Core/Src/MS4525DO.o: ../Core/Src/MS4525DO.c ../Core/Inc/MS4525DO.h \
+Core/Src/ms4525do.o: ../Core/Src/ms4525do.c ../Core/Inc/ms4525do.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -25,7 +25,7 @@ Core/Src/MS4525DO.o: ../Core/Src/MS4525DO.c ../Core/Inc/MS4525DO.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-../Core/Inc/MS4525DO.h:
+../Core/Inc/ms4525do.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:

@@ -31,7 +31,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -41,6 +40,11 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c2;
+
+#define MS4525D0_I2C &hi2c1
+#define BNO055_I2C &hi2c1
 
 /* USER CODE END EC */
 
@@ -53,7 +57,6 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

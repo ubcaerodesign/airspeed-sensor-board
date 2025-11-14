@@ -1,0 +1,60 @@
+double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed) {
+	double calibrated_airspeed = 0;
+	if(raw_pressure > RAW_PRESSURE_DEC_550RPM) {
+		calibrated_airspeed = uncalibrated_airspeed; //calibration not needed for higher airspeeds
+	} else {
+		/*calibration needed at lower airspeeds (below 550 RPM in wind tunnel)*/
+		/*between calibration points*/
+		if((raw_pressure > RAW_PRESSURE_DEC_200RPM) && (raw_pressure < RAW_PRESSURE_DEC_250RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_200RPM, RAW_PRESSURE_DEC_250RPM, WINDTUNNEL_BETZ_200RPM, WINDTUNNEL_BETZ_250RPM);
+		} else if((raw_pressure > RAW_PRESSURE_DEC_250RPM) && (raw_pressure < RAW_PRESSURE_DEC_300RPM)){
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_250RPM, RAW_PRESSURE_DEC_300RPM, WINDTUNNEL_BETZ_250RPM, WINDTUNNEL_BETZ_300RPM);
+		} else if ((raw_pressure > RAW_PRESSURE_DEC_300RPM) && (raw_pressure < RAW_PRESSURE_DEC_350RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_300RPM, RAW_PRESSURE_DEC_350RPM, WINDTUNNEL_BETZ_300RPM, WINDTUNNEL_BETZ_350RPM);
+		} else if((raw_pressure > RAW_PRESSURE_DEC_350RPM) && (raw_pressure < RAW_PRESSURE_DEC_400RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_350RPM, RAW_PRESSURE_DEC_400RPM, WINDTUNNEL_BETZ_350RPM, WINDTUNNEL_BETZ_400RPM);
+		} else if ((raw_pressure > RAW_PRESSURE_DEC_400RPM) && (raw_pressure < RAW_PRESSURE_DEC_450RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_400RPM, RAW_PRESSURE_DEC_450RPM, WINDTUNNEL_BETZ_400RPM, WINDTUNNEL_BETZ_450RPM);
+		} else if((raw_pressure > RAW_PRESSURE_DEC_450RPM) && (raw_pressure < RAW_PRESSURE_DEC_500RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_450RPM, RAW_PRESSURE_DEC_500RPM, WINDTUNNEL_BETZ_450RPM, WINDTUNNEL_BETZ_500RPM);
+		} else if ((raw_pressure > RAW_PRESSURE_DEC_500RPM) && (raw_pressure < RAW_PRESSURE_DEC_550RPM)) {
+			calibrated_airspeed = LINEAR_INTERPOLATE(raw_pressure, RAW_PRESSURE_DEC_500RPM, RAW_PRESSURE_DEC_550RPM, WINDTUNNEL_BETZ_500RPM, WINDTUNNEL_BETZ_550RPM);
+		} else {
+			/*look up table if raw pressure falls exactly on calibration point*/
+			calibrated_airspeed = calibrate_airspeed_LUT(raw_pressure);
+		}
+	}
+	return calibrated_airspeed;
+}
+double calibrate_airspeed_LUT(uint16_t raw_pressure) {
+	double mapped_airspeed = 0;
+	switch (raw_pressure) {
+	case RAW_PRESSURE_DEC_200RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_200RPM;
+		break;
+	case RAW_PRESSURE_DEC_250RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_250RPM;
+		break;
+	case RAW_PRESSURE_DEC_300RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_300RPM;
+		break;
+	case RAW_PRESSURE_DEC_350RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_350RPM;
+		break;
+	case RAW_PRESSURE_DEC_400RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_400RPM;
+		break;
+	case RAW_PRESSURE_DEC_450RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_450RPM;
+		break;
+	case RAW_PRESSURE_DEC_500RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_500RPM;
+		break;
+	case RAW_PRESSURE_DEC_550RPM:
+		mapped_airspeed = WINDTUNNEL_BETZ_550RPM;
+		break;
+	default:
+		break;
+	}
+	return mapped_airspeed;
+}

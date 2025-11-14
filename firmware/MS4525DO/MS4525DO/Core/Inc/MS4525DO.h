@@ -63,7 +63,6 @@ struct processed_t {
 	double pressure_psi; /*range: [-1,1]*/
 	double temperature_C; /*range: []*/
 	double airspeed_mps; /*range: */
-	double airspeed_calibrated_mps;
 };
 
 
@@ -83,8 +82,8 @@ struct MS4525DO_t {
 	struct processed_t processed_data;
 };
 
-void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c);
-void read_MS4525DO(struct MS4525DO_t *pSensor);
+void ms4525d0_init(I2C_HandleTypeDef *hi2c);
+void read_ms4525do(void);
 double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed);
 double calibrate_airspeed_LUT(uint16_t raw_pressure);
 
