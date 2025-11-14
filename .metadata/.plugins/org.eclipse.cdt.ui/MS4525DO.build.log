@@ -1,0 +1,10 @@
+17:16:03 **** Incremental Build of configuration Release for project MS4525DO ****
+make -j8 all 
+arm-none-eabi-size  MS4525DO.elf 
+   text	   data	    bss	    dec	    hex	filename
+  24560	    116	  11052	  35728	   8b90	MS4525DO.elf
+Finished building: default.size.stdout
+ 
+
+17:16:04 Build Finished. 0 errors, 0 warnings. (took 517ms)
+

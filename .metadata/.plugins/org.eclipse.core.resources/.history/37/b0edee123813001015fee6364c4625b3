@@ -1,0 +1,13 @@
+/*
+ * sd_card.h
+ *
+ *  Created on: Apr 6, 2025
+ *      Author: chant
+ */
+
+#ifndef INC_SD_CARD_H_
+#define INC_SD_CARD_H_
+
+void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure);
+
+#endif /* INC_SD_CARD_H_ */

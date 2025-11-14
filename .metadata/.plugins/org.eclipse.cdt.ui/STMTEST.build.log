@@ -1,0 +1,10 @@
+15:57:26 **** Incremental Build of configuration Debug for project STMTEST ****
+make -j8 all 
+arm-none-eabi-size  STMTEST.elf 
+   text	   data	    bss	    dec	    hex	filename
+  13720	    104	   2096	  15920	   3e30	STMTEST.elf
+Finished building: default.size.stdout
+ 
+
+15:57:26 Build Finished. 0 errors, 0 warnings. (took 270ms)
+

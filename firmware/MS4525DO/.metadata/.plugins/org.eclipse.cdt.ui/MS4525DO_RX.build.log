@@ -1,0 +1,10 @@
+20:55:29 **** Build of configuration Release for project MS4525DO_RX ****
+make -j8 all 
+arm-none-eabi-size  MS4525DO_RX.elf 
+   text	   data	    bss	    dec	    hex	filename
+   3980	     12	   1724	   5716	   1654	MS4525DO_RX.elf
+Finished building: default.size.stdout
+ 
+
+20:55:30 Build Finished. 0 errors, 0 warnings. (took 195ms)
+

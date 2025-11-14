@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (12.3.rel1)
+# Toolchain: GNU Tools for STM32 (13.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -9,6 +9,10 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Middlewares/Third_Party/FatFs/src/option/subdir.mk
+-include Middlewares/Third_Party/FatFs/src/subdir.mk
+-include FATFS/Target/subdir.mk
+-include FATFS/App/subdir.mk
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
@@ -60,8 +64,8 @@ all: main-build
 main-build: MS4525DO.elf secondary-outputs
 
 # Tool invocations
-MS4525DO.elf MS4525DO.map: $(OBJS) $(USER_OBJS) C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+MS4525DO.elf MS4525DO.map: $(OBJS) $(USER_OBJS) C:\Users\ellay\Desktop\Programming\GitHub\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "MS4525DO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\ellay\Desktop\Programming\GitHub\airspeed-can-transition\firmware\MS4525DO\MS4525DO\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MS4525DO.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

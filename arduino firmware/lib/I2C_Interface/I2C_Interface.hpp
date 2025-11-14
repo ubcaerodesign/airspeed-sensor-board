@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #define I2C_SDA PB7
-#define I2C_SCL PB6    
+#define I2C_SCL PB6
 #define BAUD_RATE 9600 //Serial print and debugging    
 
 /*Hardware Configuration*/

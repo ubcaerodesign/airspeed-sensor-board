@@ -1,0 +1,57 @@
+/*
+ * sd_card.c
+ *
+ *  Created on: Apr 6, 2025
+ *      Author: chant
+ */
+#include "sd_card.h"
+
+/**
+ * GLOBAL
+ */
+
+void save_sd(double airspeed, double calibrated_airspeed, uint16_t raw_pressure) {
+    FIL file_obj;           // File object
+    FRESULT result;         // FatFs result code
+    UINT bytes_written;     // Number of bytes written
+    char data_buffer[128];  // Buffer to hold formatted string
+
+    // Variables to hold RTC time and date
+    RTC_TimeTypeDef rtc_time;
+    RTC_DateTypeDef rtc_date;
+
+    // Get the current time and date from the RTC
+    if (HAL_RTC_GetTime(&hrtc, &rtc_time, RTC_FORMAT_BIN) != HAL_OK ||
+        HAL_RTC_GetDate(&hrtc, &rtc_date, RTC_FORMAT_BIN) != HAL_OK)
+    {
+        // Handle error if RTC read fails
+        return;
+    }
+
+    // Format the timestamp and data into a CSV formatted string.
+    // Format: YYYY-MM-DD HH:MM:SS,airspeed,calibrated_airspeed,raw_pressure
+    snprintf(data_buffer, sizeof(data_buffer),
+             "%04d-%02d-%02d %02d:%02d:%02d,%.2f,%.2f,%hu\r\n",
+             2000 + rtc_date.Year, rtc_date.Month, rtc_date.Date,
+             rtc_time.Hours, rtc_time.Minutes, rtc_time.Seconds,
+             airspeed, calibrated_airspeed, raw_pressure);
+
+    // Open the file in append mode (create it if it doesn't exist)
+    result = f_open(&file_obj, "airspeed.csv", FA_OPEN_APPEND | FA_WRITE);
+    if (result != FR_OK) {
+        // Handle file open error
+        return;
+    }
+
+    // Write the formatted string to the file
+    result = f_write(&file_obj, data_buffer, strlen(data_buffer), &bytes_written);
+    if (result != FR_OK) {
+        // Handle write error and close file
+        f_close(&file_obj);
+        return;
+    }
+
+    // Close the file to ensure data is saved properly
+    f_close(&file_obj);
+}
+

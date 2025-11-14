@@ -2,7 +2,7 @@
  * MS4525DO.h
  *
  *  Created on: Oct 26, 2024
- *      Author: chant
+ *      Author: chant, ella
  */
 
 //Datasheet: https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Data+Sheet%7FMS4525DO%7FB10%7Fpdf%7FEnglish%7FENG_DS_MS4525DO_B10.pdf%7FCAT-BLPS0002
@@ -11,53 +11,81 @@
 #ifndef INC_MS4525DO_H_
 #define INC_MS4525DO_H_
 
-/*Includes*/
 #include "stm32f1xx_hal.h" /* Needed for I2C */
 #include <math.h>
 #include <stdio.h>
-
-/*MACRO DEFINITIONS*/
+#include <stdlib.h>
+//#include <stdbool.h> // Provides bool, true, and false
+#include <math.h>
 /*MS4525DO CONFIGURATION PARAMETERS*/
-#define TYPE_MS4525DO     		(bool)     0 /*1 - Type A, 0 - Type B*/
+#define TYPE_MS4525DO     		(uint8_t)  0 /*1 - Type A, 0 - Type B*/
 #define PMAX_PSI_MS4525DO 		(double)   1 //casted to double for transfer function
 #define PMIN_PSI_MS4525DO 		(double)   -1
 #define ADDRESS_I2C_MS4525DO 	(uint8_t) 0x46
-/*PROCESSING MACROS*/
 #define AIR_DENSITY			 	(double) 1.225 //kg/m^3
-//this is where to include the calibration macros if needed, to generalize wind tunnel calibration process
 
-/*STRUCTURES AND ENUMERATORS*/
-/*MS4525DO Sensor Package*/
-struct data_t {
-	uint8_t status;
-    struct raw_t {
-        uint16_t pressure;
-        uint16_t temperature;
-    } raw;
-    /*Processed data - underwent conversions to engineering values and calibrations*/
-    struct processed_t {
-        double pressure_psi; /*range: [-1,1], steps at  */
-        double temperature_C; /*range: []*/
-        double airspeed_ms; /*range: */
-    } processed;
+//#define VERBOSE_MODE_EN //uncomment to enable verbose debug mode
+//#define WIND_TUNNEL_EN //uncomment to enable wind tunnel calibration features (enabled during wind tunnel only)
+
+/*CALIBRATION PARAMETERS*/
+//record betz reading in wind tunnel and raw pressure counts (decimal) from 200RPM to 550RPM in 50 RPM increments
+#define WINDTUNNEL_BETZ_200RPM (double) 0
+#define WINDTUNNEL_BETZ_250RPM (double) 1.15
+#define WINDTUNNEL_BETZ_300RPM (double) 4.7
+#define WINDTUNNEL_BETZ_350RPM (double) 8.55
+#define WINDTUNNEL_BETZ_400RPM (double) 12
+#define WINDTUNNEL_BETZ_450RPM (double) 16.25
+#define WINDTUNNEL_BETZ_500RPM (double) 20.3
+#define WINDTUNNEL_BETZ_550RPM (double) 24.8
+
+#define RAW_PRESSURE_DEC_200RPM (uint16_t) 8223
+#define RAW_PRESSURE_DEC_250RPM (uint16_t) 8231
+#define RAW_PRESSURE_DEC_300RPM (uint16_t) 8262
+#define RAW_PRESSURE_DEC_350RPM (uint16_t) 8294
+#define RAW_PRESSURE_DEC_400RPM (uint16_t) 8333
+#define RAW_PRESSURE_DEC_450RPM (uint16_t) 8409
+#define RAW_PRESSURE_DEC_500RPM (uint16_t) 8419
+#define RAW_PRESSURE_DEC_550RPM (uint16_t) 8463
+
+/*linear interpolation macro*/
+#define LINEAR_INTERPOLATE(x,x1,x2,y1,y2) (double) (y1+(x-x1)*(y2-y1)/(x2-x1))
+/*seperate 16-bit data to MSB and LSB*/
+#define LSB(data) (uint8_t)(data & 0xFF)
+#define MSB(data) (uint8_t)(data >> 8)
+
+/*Raw bytes*/
+struct raw_t {
+	uint16_t pressure;
+	uint16_t temperature;
 };
-/*Enumerate status codes returned by the MS4525DO*/
-enum Status {
+/*Processed Data*/
+struct processed_t {
+	double pressure_psi; /*range: [-1,1]*/
+	double temperature_C; /*range: []*/
+	double airspeed_mps; /*range: */
+	double airspeed_calibrated_mps;
+};
+
+
+/*I2C read status codes - see MS4525DO interface manual*/
+typedef enum {
 	normal,
 	reserved,
 	stale,
-	fault
+	fault,
+	unknown
+} SensorStatus;
+
+struct MS4525DO_t {
+	I2C_HandleTypeDef *i2c_handle;
+	SensorStatus sensor_status;
+	struct raw_t raw_data;
+	struct processed_t processed_data;
 };
 
-/*Updates the MS4525DO sensor data*/
-void update_MS4525DO_data();
+void MS4525DO_Initialize(struct MS4525DO_t *pSensor, I2C_HandleTypeDef *hi2c);
+void read_MS4525DO(struct MS4525DO_t *pSensor);
+double calibrate_airspeed(uint16_t raw_pressure, double uncalibrated_airspeed);
+double calibrate_airspeed_LUT(uint16_t raw_pressure);
 
-/*Fetches the current MS4525DO sensor data*/
-struct data_t fetch_MS4525DO_data();
-
-
-/*Lower Level Functions - I2C, CAN*/
-
-
-
-#endif /* INC_MS4525DO_H_ */
+#endif
